@@ -39,33 +39,3 @@ class UserRepository {
 }
 
 module.exports = new UserRepository();
-
-//const { docClient, USERS_TABLE } = require('../utils/dynamodbClient');
-//const { PutItemCommand, ScanCommand, DeleteItemCommand } = require('@aws-sdk/lib-dynamodb');
-//
-//module.exports = {
-//  async createUser(user) {
-//    const command = new PutItemCommand({
-//      TableName: USERS_TABLE,
-//      Item: user,
-//    });
-//    await docClient.send(command);
-//    return user;
-//  },
-//
-//  async getAllUsers() {
-//    const command = new ScanCommand({
-//      TableName: USERS_TABLE,
-//    });
-//    const { Items } = await docClient.send(command);
-//    return Items || [];
-//  },
-//
-//  async deleteUser(id) {
-//    const command = new DeleteItemCommand({
-//      TableName: USERS_TABLE,
-//      Key: { id },
-//    });
-//    await docClient.send(command);
-//  },
-//};
