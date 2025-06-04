@@ -1,5 +1,5 @@
 const { docClient, TODOS_TABLE } = require('../utils/dynamodbClient');
-const { PutCommand, ScanCommand, UpdateCommand, QueryCommand } = require('@aws-sdk/lib-dynamodb');
+const { PutCommand, GetCommand, ScanCommand, UpdateCommand, QueryCommand, DeleteCommand } = require('@aws-sdk/lib-dynamodb');
 const { v4: uuidv4 } = require('uuid');
 class TodoRepository {
   async create({ title, userId }) {
@@ -11,6 +11,14 @@ class TodoRepository {
     };
     await docClient.send(new PutCommand(params));
     return { id, title, userId, completed: false, createdAt: now, updatedAt: now };
+  }
+  async findById(id) {
+    const params = {
+      TableName: TODOS_TABLE,
+      Key: { id },
+    };
+    const { Item } = await docClient.send(new GetCommand(params));
+    return Item || null;
   }
   async findMany() {
     const { Items } = await docClient.send(new ScanCommand({ TableName: TODOS_TABLE }));
@@ -57,6 +65,21 @@ class TodoRepository {
       return Attributes;
     } catch (error) {
       if (error.name === 'ConditionalCheckFailedException') return null;
+      throw error;
+    }
+  }
+  async delete(id) {
+    const params = {
+      TableName: TODOS_TABLE,
+      Key: { id },
+      ConditionExpression: 'attribute_exists(id)',
+    };
+    try {
+      await docClient.send(new DeleteCommand(params));
+    } catch (error) {
+      if (error.name === 'ConditionalCheckFailedException') {
+        throw new Error('Todo not found');
+      }
       throw error;
     }
   }

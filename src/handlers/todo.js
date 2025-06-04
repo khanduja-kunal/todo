@@ -10,6 +10,18 @@ module.exports.create = async (event) => {
     return handleError(error);
   }
 };
+module.exports.getById = async (event) => {
+  try {
+    const { id } = event.pathParameters || {};
+    if (!id) {
+      throw new Error('Path parameter "id" is required');
+    }
+    const todo = await TodoService.getTodoById(id);
+    return createResponse(200, todo);
+  } catch (error) {
+    return handleError(error);
+  }
+};
 module.exports.getAll = async (event) => {
   try {
     const todos = await TodoService.getTodos();
@@ -30,6 +42,18 @@ module.exports.update = async (event) => {
     if (typeof body.completed === 'boolean') updates.completed = body.completed;
     const updatedTodo = await TodoService.updateTodo(id, updates);
     return createResponse(200, updatedTodo);
+  } catch (error) {
+    return handleError(error);
+  }
+};
+module.exports.delete = async (event) => {
+  try {
+    const { id } = event.pathParameters || {};
+    if (!id) {
+      throw new Error('Path parameter "id" is required');
+    }
+    await TodoService.deleteTodo(id);
+    return createResponse(204, {});
   } catch (error) {
     return handleError(error);
   }

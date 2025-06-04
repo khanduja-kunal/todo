@@ -56,12 +56,26 @@ functions:
           path: users
           method: post
           cors: true
+  getUserById:
+    handler: src/handlers/user.getById
+    events:
+      - http:
+          path: users/{id}
+          method: get
+          cors: true
   getUsers:
     handler: src/handlers/user.getAll
     events:
       - http:
           path: users
           method: get
+          cors: true
+  updateUser:
+    handler: src/handlers/user.update
+    events:
+      - http:
+          path: users/{id}
+          method: put
           cors: true
   deleteUser:
     handler: src/handlers/user.delete
@@ -77,6 +91,13 @@ functions:
           path: todos
           method: post
           cors: true
+  getTodoById:
+    handler: src/handlers/todo.getById
+    events:
+      - http:
+          path: todos/{id}
+          method: get
+          cors: true
   getTodos:
     handler: src/handlers/todo.getAll
     events:
@@ -90,6 +111,13 @@ functions:
       - http:
           path: todos/{id}
           method: put
+          cors: true
+  deleteTodo:
+    handler: src/handlers/todo.delete
+    events:
+      - http:
+          path: todos/{id}
+          method: delete
           cors: true
 resources:
   Resources:
