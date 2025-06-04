@@ -1,0 +1,25 @@
+{
+  "name": "todoapp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "serverless deploy",
+    "offline": "IS_OFFLINE=true serverless offline",
+    "dynamodb": "java -Djava.library.path=./dynamodb/DynamoDBLocal_lib -jar ./dynamodb/DynamoDBLocal.jar -sharedDb -port 8000"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.645.0",
+    "@aws-sdk/lib-dynamodb": "^3.645.0",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5",
+    "serverless": "^4.0.0",
+    "serverless-dynamodb-local": "^0.2.40",
+    "serverless-offline": "^14.0.0"
+  }
+}

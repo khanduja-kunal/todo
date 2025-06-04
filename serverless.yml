@@ -1,0 +1,126 @@
+service: todo-aws
+frameworkVersion: '4'
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline
+custom:
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+      seed: true
+      convertEmptyValues: true
+      dbPath: ./dynamodb
+    seed:
+      dev:
+        sources:
+          - table: ${self:service}-users-${self:provider.stage}
+            sources: [./seed/users.json]
+          - table: ${self:service}-todos-${self:provider.stage}
+            sources: [./seed/todos.json]
+  serverless-offline:
+    httpPort: 3000
+    lambdaPort: 3002
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  stage: dev
+  environment:
+    USERS_TABLE: ${self:service}-users-${self:provider.stage}
+    TODOS_TABLE: ${self:service}-todos-${self:provider.stage}
+    CORS_ORIGIN: ${opt:cors-origin, '*'}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - !GetAtt UsersTable.Arn
+            - !GetAtt TodosTable.Arn
+            - !Sub ${TodosTable.Arn}/index/UserIdIndex
+functions:
+  createUser:
+    handler: src/handlers/user.create
+    events:
+      - http:
+          path: users
+          method: post
+          cors: true
+  getUsers:
+    handler: src/handlers/user.getAll
+    events:
+      - http:
+          path: users
+          method: get
+          cors: true
+  deleteUser:
+    handler: src/handlers/user.delete
+    events:
+      - http:
+          path: users/{id}
+          method: delete
+          cors: true
+  createTodo:
+    handler: src/handlers/todo.create
+    events:
+      - http:
+          path: todos
+          method: post
+          cors: true
+  getTodos:
+    handler: src/handlers/todo.getAll
+    events:
+      - http:
+          path: todos
+          method: get
+          cors: true
+  updateTodo:
+    handler: src/handlers/todo.update
+    events:
+      - http:
+          path: todos/{id}
+          method: put
+          cors: true
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-users-${self:provider.stage}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    TodosTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-todos-${self:provider.stage}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: UserIdIndex
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST

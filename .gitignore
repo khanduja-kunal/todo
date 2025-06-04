@@ -1,0 +1,9 @@
+node_modules/
+.serverless/
+dynamodb/
+.dynamodb/
+.env
+.env.bak
+*.log
+dynamodb-local-metadata.json
+shared-local-instance.db

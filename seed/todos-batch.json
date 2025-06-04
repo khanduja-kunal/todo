@@ -1,0 +1,16 @@
+{
+  "todo-aws-todos-dev": [
+    {
+      "PutRequest": {
+        "Item": {
+          "id": {"S": "todo1"},
+          "title": {"S": "Test Todo"},
+          "userId": {"S": "user1"},
+          "completed": {"BOOL": false},
+          "createdAt": {"S": "2025-06-02T12:00:00Z"},
+          "updatedAt": {"S": "2025-06-02T12:00:00Z"}
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "todo-aws-users-dev": [
+    {
+      "PutRequest": {
+        "Item": {
+          "id": {"S": "user1"},
+          "username": {"S": "testuser1"},
+          "password": {"S": "pass123"},
+          "createdAt": {"S": "2025-06-02T12:00:00Z"},
+          "updatedAt": {"S": "2025-06-02T12:00:00Z"}
+        }
+      }
+    }
+  ]
+}
